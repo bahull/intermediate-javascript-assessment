@@ -16,7 +16,6 @@
 const callBinding = (magicAnimals, updateAnimal, id) => {
   let currentAnimal = magicAnimals.filter(curr => curr.id === id);
   updateAnimal.bind(currentAnimal);
-  //   console.log('currentAnimal: ', currentAnimal, updateAnimal);
   return updateAnimal('Trogdor');
 };
 
@@ -39,7 +38,6 @@ const applyBinding = (magicAnimals, updateAnimal, id) => {
     'being majestic',
     'eating rainbows'
   ]);
-  //   return updateAnimal();
 };
 
 // *************
@@ -60,14 +58,12 @@ var foo;
 
 // CODE HERE...
 const promiseMe = $q => {
-  return $q(function(resolve, reject) {
-    console.log('hit 1');
-    setTimeout(function() {
-      console.log('hit 2');
-      resolve(console.log('Hit'));
-    }, 20);
-  });
-
+  var defer = $q.defer();
+  console.log('hit 1');
+  setTimeout(function() {
+    defer.resolve((foo = 'bar'));
+  }, 20);
+  return defer.promise;
 };
 
 // *************
@@ -83,8 +79,17 @@ const promiseMe = $q => {
 // and then resolve the array as you complete your promise.
 
 // CODE HERE...
-const emailList = ($q, $http) => {
-  return $q(function(resolve, reject) {
-    return $http.get('/api/users').then(response => console.log(response));
+function emailList($q, $http) {
+  var defer = $q.defer();
+  var newArr = [];
+  $http({
+    method: 'GET',
+    url: '/api/users'
+  }).then(function(response) {
+    for (var i = 0; i < response.data.length; i++) {
+      newArr.push(response.data[i].email);
+    }
+    defer.resolve(newArr);
   });
-};
+  return defer.promise;
+}
